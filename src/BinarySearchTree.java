@@ -88,7 +88,25 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T>{
             }
 
             //set the data of current to either the predecessor or the successor
+            current = current.left;
+            //set the left child of current to the result of calling delete on it,
+            //  passing the data of current
+            return delete(current, current.left);
         }
+
+        //if greather than
+        if(target.compareTo(current.data) > 0){
+            //return the outcome of calling delete on the right child of current
+            return BSTDelete(current.right, target);
+        }
+
+        //if less than
+        if(target.compareTo(current.data) < 0){
+            //return the outcome of calling delete on the left child of current
+            return BSTDelete(current.left, target);
+        }
+
+        return null;
     }
 
     private boolean BSTContains(Node current, T target){
