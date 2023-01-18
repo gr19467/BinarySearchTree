@@ -1,14 +1,22 @@
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+
 public class BinarySearchTree<T extends Comparable<T>> implements Tree<T>{
 
     private Node root;
 
-    private BinarySearchTree(){
+    ///region Constructors
+
+    public BinarySearchTree(){
         this.root = null;
     }
 
-    private BinarySearchTree(T data){
+    public BinarySearchTree(T data){
         this.root = new Node(data);
     }
+
+    ///endregion
+
+    ///region Interface Methods
 
     @Override
     public boolean isEmpty() {
@@ -33,8 +41,13 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T>{
         return BSTContains(root,target);
     }
 
+    ///endregion
+
     private T getMin(Node node){
-        if(node == null) {
+        if(node == null){
+            return null;
+        }
+        if(node.left == null) {
             return node.data;
         }
 
@@ -42,88 +55,88 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T>{
     }
 
     private T getMax(Node node){
-        if(node == null) {
+        if(node == null){
+            return null;
+        }
+        if(node.right == null) {
             return node.data;
         }
 
         return getMax(node.right);
     }
 
-    private Node BSTInsert(Node current, T data){
-        if(current == null){
+    private Node BSTInsert(Node root, T data){
+        if(root == null){
             return new Node(data);
         }
 
-        if(current.data == data){
-            return current;
+        if(data.compareTo(root.data) < 0){
+            root.left = BSTInsert(root.left, data);
         }
 
-        if(data.compareTo(current.data) < 0){
-            return BSTInsert(current.left, data);
+        if(data.compareTo(root.data) > 0){
+            root.right = BSTInsert(root.right, data);
         }
 
-        if(data.compareTo(current.data) > 0){
-            return BSTInsert(current.right, data);
-        }
-
-        return null;
+        return root;
     }
 
-    private Node BSTDelete(Node current, T target){
-        if(current == null){
+    private Node BSTDelete(Node root, T target){
+        if(root == null){
             return null;
         }
 
-        if(target == current.data){
-            if(current.left == null && current.right == null){
+        if(target == root.data){
+            if(root.left == null && root.right == null){
                 return null;
             }
 
-            if(current.left == null){
-                return current.right;
+            if(root.left == null){
+                return root.right;
             }
 
-            if(current.right == null){
-                return current.left;
+            if(root.right == null){
+                return root.left;
             }
 
-            //set the data of current to either the predecessor or the successor
-            current = current.left;
-            //set the left child of current to the result of calling delete on it,
-            //  passing the data of current
-            return delete(current, current.left);
+            //set the data of root to either the predecessor or the successor
+            root.data = getMax(root);
+            //set the left child of root to the result of calling delete on it,
+            //  passing the data of root
+            return BSTDelete(root.left, root.data);
         }
 
-        //if greather than
-        if(target.compareTo(current.data) > 0){
-            //return the outcome of calling delete on the right child of current
-            return BSTDelete(current.right, target);
+        //if greater than
+        if(target.compareTo(root.data) > 0){
+            //return the outcome of calling delete on the right child of root
+            return BSTDelete(root.right, target);
         }
 
         //if less than
-        if(target.compareTo(current.data) < 0){
-            //return the outcome of calling delete on the left child of current
-            return BSTDelete(current.left, target);
+        if(target.compareTo(root.data) < 0){
+            //return the outcome of calling delete on the left child of root
+            return BSTDelete(root.left, target);
         }
 
         return null;
     }
 
-    private boolean BSTContains(Node current, T target){
-        if(current == null){
+    private boolean BSTContains(Node root, T target){
+        if(root == null){
+            System.out.println("Root is null.");
             return false;
         }
 
-        if(current == target){
+        if(root.data == target){
             return true;
         }
 
-        if(target.compareTo(current.data) < 0){
-            return BSTContains(current.left, target);
+        if(target.compareTo(root.data) < 0){
+            return BSTContains(root.left, target);
         }
 
-        if(target.compareTo(current.data) > 0){
-            return BSTContains(current.right, target);
+        if(target.compareTo(root.data) > 0){
+            return BSTContains(root.right, target);
         }
 
         return false;
